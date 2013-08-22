@@ -1,22 +1,35 @@
+#!/usr/bin/env python
 # -*- coding: utf8 -*-
-stuff = ["Øl", "Light", "Sodavand", "Cider", "Rødvin"]
-russer = ["Søren", "faggot", "Martin"]
-
-def drinklist(items, names):
-    with open("stregliste.tex", mode="w") as tex:
-        tex.write(
-'''\\documentclass[10pt,a4paper,danish]{article}
-\\usepackage[danish]{babel}
-\\usepackage[utf8]{inputenc}
-\\usepackage[margin=1cm]{geometry}
-\\usepackage{graphicx}
-\\usepackage{array}
-\\usepackage[table]{xcolor}
 
 
-\\setlength\\parskip{0em}
-\\setlength\\parindent{0em}
+def header():
+    return '''
+           \\documentclass[10pt,a4paper,danish]{article}
+           \\usepackage[danish]{babel}
+           \\usepackage[utf8]{inputenc}
+           \\usepackage[margin=1cm]{geometry}
+           \\usepackage{graphicx}
+           \\usepackage{array}
+           \\usepackage[table]{xcolor}
+           \\setlength\\parskip{0em}
+           \\setlength\\parindent{0em}
+           '''
+# Indlæs navne
+with open('russer.txt') as f:
+    russer = f.read().strip().split('\n')
 
+with open('vejledere.txt') as f:
+    vejledere = f.read().strip().split('\n')
+
+
+# Streglister
+drikkevarer = ['Øl', 'Light', 'Sodavand', 'Cider', 'Rødvin']
+mad = ['Mad på fad']
+def drinklist(items, names, filename):
+    with open(filename + '.tex', mode="w") as tex:
+        tex.write(header())
+
+        tex.write('''
 \\begin{document}
 \\begin{center}
 \\rowcolors{1}{white}{lightgray}
@@ -39,6 +52,9 @@ def drinklist(items, names):
 ''')
 
 
-drinklist(stuff, russer)
 
-
+if __name__ == '__main__':
+    drinklist(drikkevarer, russer, 'russer-stregliste')
+    drinklist(drikkevarer, vejledere, 'vejleder-stregliste')
+    drinklist(mad, russer, 'russer-stregliste-mad')
+    drinklist(mad, vejledere, 'vejleder-stregliste-mad')
