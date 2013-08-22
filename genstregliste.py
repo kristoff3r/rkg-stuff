@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-
 def header():
     return '''\\documentclass[10pt,a4paper,danish]{article}
 \\usepackage[danish]{babel}
@@ -11,7 +10,35 @@ def header():
 \\usepackage{array}
 \\usepackage[table]{xcolor}
 \\setlength\\parskip{0em}
-\\setlength\\parindent{0em}'''
+\\setlength\\parindent{0em}
+\\begin{document}
+'''
+
+def footer():
+    return '''\\end{document}
+'''
+
+def table(items, names, rowsize=None, per_page=None):
+    table_header = ''
+    if rowsize is not None:
+        table_header += '\\renewcommand\\arraystretch{%f} \\setlength\\minrowclearance{%fpt}' % (rowsize, rowsize)
+    table_header += '''\\rowcolors{1}{white}{lightgray}
+\\resizebox{\\textwidth}{!} {
+\\begin{tabular}[h!]{'''+"|l"+"|p{0.50\\textwidth}"+("|c"*(len(items)-1) + "|")+"}\n"
+    table_header += "\hline"
+    table_header += " Navn " + "& "
+    table_header += " & ".join(items)
+    table_header += "\\\\\n"
+    table_header += "\hline"
+    res = table_header
+    for i in range(len(names)):
+        if per_page is not None and i % per_page == 0 and i > 0:
+                res += "\\end{tabular}}" + table_header
+        res += "  " + names[i] + (" &"*(len(items))) + "\\\\\n"
+        res += "\hline"
+    res += '\\end{tabular}}'
+    return res
+
 
 # Indlæs navne
 with open('russer.txt') as f:
@@ -21,67 +48,20 @@ with open('vejledere.txt') as f:
     vejledere = f.read().strip().split('\n')
 
 
-# Skabelon til streglister
-drikkevarer = ['Øl', 'Light', 'Sodavand', 'Cider', 'Rødvin']
-mad = ['Mad på fad']
-def drinklist(items, names, filename):
+def liste(items, names, filename, rowsize=None, per_page=None):
     with open(filename + '.tex', mode="w") as tex:
         tex.write(header())
-
-        tex.write('''
-\\begin{document}
-\\begin{center}
-\\rowcolors{1}{white}{lightgray}
-\\resizebox{\\textwidth}{!} {
-\\begin{tabular}[h!]{'''+"|l"+"|p{0.50\\textwidth}"+("|c"*(len(items)-1) + "|")+"}\n")
-        tex.write("\hline")
-        tex.write("  " + "& ")
-        tex.write(" & ".join(items))
-        tex.write("\\\\\n")
-        tex.write("\hline")
-
-        for name in names:
-            tex.write("  " + name + (" &"*(len(items))) + "\\\\\n")
-            tex.write("\hline")
-
-        tex.write('''
-\\end{tabular}}
-\\end{center}
-\\end{document}
-''')
-
-# Skabelon til afleverede ting
-afleveret = ['Har afleveret']
-def afleverede_ting(items, names, filename):
-    with open(filename + '.tex', mode="w") as tex:
-        tex.write(header())
-        #tex.write('\\renewcommand\\arraystretch{2.4} \\setlength\\minrowclearance{2.4pt}')
-        tex.write('''
-\\begin{document}
-\\begin{center}
-\\rowcolors{1}{white}{lightgray}
-\\resizebox{\\textwidth}{!} {
-\\begin{tabular}[h!]{'''+"|l"+"|p{0.50\\textwidth}"+("|c"*(len(items)-1) + "|")+"}\n")
-        tex.write("\hline")
-        tex.write(" Navn " + "& ")
-        tex.write(" & ".join(items))
-        tex.write("\\\\\n")
-        tex.write("\hline")
-
-        for name in names:
-            tex.write("  " + name + (" &"*(len(items))) + "\\\\\n")
-            tex.write("\hline")
-
-        tex.write('''
-\\end{tabular}}
-\\end{center}
-\\end{document}
-''')
+        tex.write(table(items, names, rowsize, per_page))
+        tex.write(footer())
 
 
 if __name__ == '__main__':
-    drinklist(drikkevarer, russer, 'russer-stregliste')
-    drinklist(drikkevarer, vejledere, 'vejleder-stregliste')
-    drinklist(mad, russer, 'russer-stregliste-mad')
-    drinklist(mad, vejledere, 'vejleder-stregliste-mad')
-    afleverede_ting(afleveret, russer, 'russer-afleveret')
+    # Skabelon til streglister
+    drikkevarer = ['Øl', 'Light', 'Sodavand', 'Cider', 'Rødvin']
+    mad = ['Mad på fad']
+    afleveret = ['Har afleveret']
+    liste(drikkevarer, russer, 'russer-stregliste', 1.3)
+    liste(drikkevarer, vejledere, 'vejleder-stregliste')
+    liste(mad, russer, 'russer-stregliste-mad')
+    liste(mad, vejledere, 'vejleder-stregliste-mad')
+    liste(afleveret, russer, 'russer-afleveret', 2.4, 14)
