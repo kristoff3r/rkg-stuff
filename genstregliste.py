@@ -2,17 +2,18 @@
 # -*- coding: utf8 -*-
 
 def header():
-    return '''\\documentclass[10pt,a4paper,danish]{article}
-\\usepackage[danish]{babel}
-\\usepackage[utf8]{inputenc}
-\\usepackage[margin=1cm]{geometry}
-\\usepackage{graphicx}
-\\usepackage{array}
-\\usepackage[table]{xcolor}
-\\setlength\\parskip{0em}
-\\setlength\\parindent{0em}
-\\begin{document}
-'''
+        return '''\\documentclass[10pt,a4paper,danish]{article}
+        \\usepackage[danish]{babel}
+        \\usepackage[utf8]{inputenc}
+        \\usepackage[margin=1cm]{geometry}
+        \\usepackage{graphicx}
+        \\usepackage{array}
+        \\usepackage{amssymb}
+        \\usepackage[table]{xcolor}
+        \\setlength\\parskip{0em}
+        \\setlength\\parindent{0em}
+        \\begin{document}
+        '''
 
 def footer():
     return '''\\end{document}
@@ -54,6 +55,27 @@ def liste(items, names, filename, rowsize=None, per_page=None):
         tex.write(table(items, names, rowsize, per_page))
         tex.write(footer())
 
+def checkliste(names, filename):
+    with open(filename + '.tex', mode="w") as tex:
+        tex.write(header())
+        for name in names:
+            table_header = ''
+        table_header += '''\\rowcolors{1}{white}{lightgray}
+    \\resizebox{\\textwidth}{!} {
+    \\begin{tabular}{l'''+"p{0.50\\textwidth}"+("l"*4 + "")+"}\n"
+        res = table_header
+        for i in range(0,len(names),2):
+            res += names[i] + " & $\square$ "
+            try:
+                res += "&" + names[i+1] + "& $\square$ "
+            except IndexError:
+                pass
+            res += "\\\\\n"
+        res += "\\end{tabular}}"
+        tex.write(res)
+        tex.write(footer())
+
+
 
 if __name__ == '__main__':
     # Skabelon til streglister
@@ -65,3 +87,4 @@ if __name__ == '__main__':
     liste(mad, russer, 'russer-stregliste-mad')
     liste(mad, vejledere, 'vejleder-stregliste-mad')
     liste(afleveret, russer, 'russer-afleveret', 2.4, 14)
+    checkliste(russer, 'russer-checkliste')
