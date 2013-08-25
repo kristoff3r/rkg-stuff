@@ -48,6 +48,9 @@ with open('russer.txt') as f:
 with open('vejledere.txt') as f:
     vejledere = f.read().strip().split('\n')
 
+with open('vejledere-alle.txt') as f:
+    vejlederealle = f.read().strip().split('\n')
+
 
 def liste(items, names, filename, rowsize=None, per_page=None):
     with open(filename + '.tex', mode="w") as tex:
@@ -80,10 +83,12 @@ def checkliste(names, filename):
 if __name__ == '__main__':
     # Skabelon til streglister
     drikkevarer = ['Øl', 'Light', 'Sodavand', 'Cider', 'Rødvin']
+    campusdrikkevarer = ['Øl', 'Light', 'Alle andre ting']
     mad = ['Mad på fad']
     afleveret = ['Har afleveret']
     liste(drikkevarer, russer, 'russer-stregliste', 1.3)
     liste(drikkevarer, vejledere, 'vejleder-stregliste')
+    liste(campusdrikkevarer, vejlederealle, 'vejleder-alle-stregliste')
     liste(mad, russer, 'russer-stregliste-mad')
     liste(mad, vejledere, 'vejleder-stregliste-mad')
     liste(afleveret, russer, 'russer-afleveret', 2.4, 14)
