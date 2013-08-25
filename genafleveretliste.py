@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf8 -*-
 stuff = ["Har afleveret"]
 russer = ["Søren", "faggot", "Martin"]
